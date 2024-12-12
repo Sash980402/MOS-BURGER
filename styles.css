@@ -1,0 +1,140 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    background-image: url('background.jpg'); /* Add your background image URL here */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+h2, h3 {
+    color: #555;
+}
+
+nav {
+    margin-bottom: 20px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+}
+
+nav ul li {
+    margin: 0;
+}
+
+nav ul li a {
+    display: block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    background-color: #555;
+}
+
+input[type="text"], input[type="number"], input[type="email"], input[type="password"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+.menu, .cart, .previous-orders, .customer-management, .report-generation, .login {
+    margin-bottom: 30px;
+}
+
+#menu-items, #cart-items, #order-list, #customer-list {
+    list-style: none;
+    padding: 0;
+}
+
+#menu-items li, #cart-items li, #order-list li, #customer-list li {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#menu-items li button, #cart-items li button, #order-list li button, #customer-list li button {
+    margin-left: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.login {
+    text-align: center;
+}
+
+.login form {
+    display: inline-block;
+    text-align: left;
+}
+
+.section {
+    display: none; /* Hide all sections by default */
+}
+
+.section.active {
+    display: block; /* Show the active section */
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item button {
+    margin-left: 10px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 200px; /* Adjust the height as needed */
+    object-fit: cover;
+}
