@@ -91,9 +91,19 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     const password = document.getElementById('password').value;
 
     if (username === validCredentials.username && password === validCredentials.password) {
-        // Hide login section and show the main app
+        // Hide login section
         document.getElementById('login-section').classList.add('hidden');
+
+        // Show the main app section
         document.getElementById('app-section').classList.remove('hidden');
+
+        // Show the navbar
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('hidden');
+        }
+
+        // Show the default section (e.g., Store Management)
         showSection('store-management');
         displayMenuItems();
         displayPreviousOrders();
@@ -104,12 +114,21 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
 });
 
 // Function to display menu items categorically
-function displayMenuItems(category = "All") {
+function displayMenuItems(category = "All", query = "") {
     const menuItems = document.getElementById('menu-items');
     menuItems.innerHTML = '';
 
     // Filter items by category
-    const filteredItems = category === "All" ? items : items.filter(item => item.category === category);
+    let filteredItems = category === "All" ? items : items.filter(item => item.category === category);
+
+    // Apply search filter
+    if (query) {
+        filteredItems = filteredItems.filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            item.code.toLowerCase().includes(query) ||
+            item.category.toLowerCase().includes(query)
+        );
+    }
 
     // Check for expired items
     const expiredItems = filteredItems.filter(item => new Date(item.expiry) < new Date());
@@ -285,6 +304,12 @@ document.getElementById('add-item-form').addEventListener('submit', function (e)
 
         // Clear form
         document.getElementById('add-item-form').reset();
+
+        // Hide image preview
+        document.getElementById('image-preview').style.display = 'none';
+
+        // Show success message
+        alert("Item added successfully!");
     } else {
         alert("Please fill in all fields.");
     }
@@ -306,6 +331,14 @@ function addToOrder(index) {
         cart.push({ ...item, quantity: 1 });
     }
 
+    updateCartDisplay();
+}
+
+function removeFromCart(index) {
+    // Remove the item from the cart array
+    cart.splice(index, 1);
+
+    // Update the cart display
     updateCartDisplay();
 }
 
@@ -824,4 +857,104 @@ function generateFoodItemsCountReport() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+// Function to update the discounted price in real-time
+document.getElementById('item-price').addEventListener('input', updateDiscountedPrice);
+document.getElementById('item-discount').addEventListener('input', updateDiscountedPrice);
+
+function updateDiscountedPrice() {
+    const price = parseFloat(document.getElementById('item-price').value) || 0;
+    const discount = parseFloat(document.getElementById('item-discount').value) || 0;
+    const discountedPrice = price - (price * (discount / 100));
+    document.getElementById('discounted-price').textContent = discountedPrice.toFixed(2);
+}
+
+// Function to preview the image
+document.getElementById('item-image').addEventListener('input', function () {
+    const imageUrl = this.value;
+    const imagePreview = document.getElementById('image-preview');
+    if (imageUrl) {
+        imagePreview.src = imageUrl;
+        imagePreview.style.display = 'block';
+    } else {
+        imagePreview.style.display = 'none';
+    }
+});
+
+// Toggle the visibility of the Add Item form
+document.getElementById('toggle-add-item-form').addEventListener('click', function () {
+    const addItemFormContainer = document.getElementById('add-item-form-container');
+    if (addItemFormContainer.style.display === 'none') {
+        addItemFormContainer.style.display = 'block';
+    } else {
+        addItemFormContainer.style.display = 'none';
+    }
+});
+
+// Function to handle search input changes
+document.getElementById('search-menu').addEventListener('input', function () {
+    const query = this.value.toLowerCase(); // Get the search query and convert to lowercase
+    displayMenuItems(currentCategory, query); // Pass the query to displayMenuItems
+});
+
+// Variable to keep track of the current category filter
+let currentCategory = "All";
+
+// Function to filter items by category and search query
+function displayMenuItems(category = "All", query = "") {
+    currentCategory = category; // Update the current category
+    const menuItems = document.getElementById('menu-items');
+    menuItems.innerHTML = '';
+
+    // Filter items by category
+    let filteredItems = category === "All" ? items : items.filter(item => item.category.toLowerCase() === category.toLowerCase());
+
+    // Apply search filter
+    if (query) {
+        filteredItems = filteredItems.filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            item.code.toLowerCase().includes(query) ||
+            item.category.toLowerCase().includes(query)
+        );
+    }
+
+    // Check for expired items
+    const expiredItems = filteredItems.filter(item => new Date(item.expiry) < new Date());
+
+    // Display filtered items
+    filteredItems.forEach((item, index) => {
+        const expiryDate = new Date(item.expiry);
+        const today = new Date();
+        const isExpired = expiryDate < today;
+
+        const itemElement = document.createElement('div');
+        itemElement.className = "col-md-4 mb-3";
+        itemElement.innerHTML = `
+            <div class="card ${isExpired ? 'bg-danger text-white' : ''}">
+                <img src="${item.image}" class="card-img-top" alt="${item.name}">
+                <div class="card-body">
+                    <h5 class="card-title">${item.name}</h5>
+                    <p class="card-text">Code: ${item.code}</p>
+                    <p class="card-text">Price: LKR ${item.price.toFixed(2)}</p>
+                    <p class="card-text">Discount: ${item.discount}%</p>
+                    <p class="card-text">Expiry: ${item.expiry} ${isExpired ? '(Expired)' : ''}</p>
+                    <button onclick="editItem(${index})" class="btn btn-warning btn-sm">Edit</button>
+                    <button onclick="deleteItem(${index})" class="btn btn-danger btn-sm">Delete</button>
+                    <button onclick="addToOrder(${index})" class="btn btn-primary">Add to Order</button>
+                </div>
+            </div>
+        `;
+        menuItems.appendChild(itemElement);
+    });
+
+    // Notify user about expired items
+    if (expiredItems.length > 0) {
+        alert(`⚠️ Warning: There are ${expiredItems.length} expired items in the inventory. Please remove them.`);
+    }
+}
+
+// Update the filterItems function to call displayMenuItems with the category and empty query
+function filterItems(category) {
+    displayMenuItems(category);
 }
